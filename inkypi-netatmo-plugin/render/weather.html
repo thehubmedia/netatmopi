@@ -1,0 +1,97 @@
+{% extends "plugin.html" %}
+
+{% block content %}
+<div class="weather-dashboard">
+    <!-- Header with Station Info -->
+    <div class="header">
+        <div class="station-name">{{ station.name }}</div>
+        <div class="station-info">Station {{ station.index }} of {{ station.total }} • Updated {{ updated }}</div>
+    </div>
+
+    {% if netatmo.available %}
+    <!-- Current Weather (Netatmo Real-Time) -->
+    <div class="current-weather">
+        <div class="current-main">
+            <div class="current-temp">{{ netatmo.outdoor_temp }}</div>
+            <div class="current-details">
+                <div class="detail-item">💧 {{ netatmo.outdoor_humidity }}</div>
+                <div class="detail-item">🎚️ {{ netatmo.pressure }} hPa</div>
+                {% if netatmo.wind_speed %}
+                <div class="detail-item">💨 {{ netatmo.wind_speed }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if netatmo.indoor_temp %}
+        <div class="indoor-badge">
+            🏠 Indoor: {{ netatmo.indoor_temp }} • {{ netatmo.indoor_humidity }}
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="no-data">Netatmo data unavailable</div>
+    {% endif %}
+
+    {% if owm.available %}
+    <!-- Hourly Forecast -->
+    <div class="forecast-section">
+        <div class="section-title">Next 12 Hours</div>
+        <div class="hourly-grid">
+            {% for hour in owm.hourly[:12] %}
+            <div class="hour-card">
+                <div class="hour-time">{{ hour.time }}</div>
+                <div class="hour-icon">
+                    {% if '01' in hour.icon %}☀️
+                    {% elif '02' in hour.icon %}⛅
+                    {% elif '03' in hour.icon or '04' in hour.icon %}☁️
+                    {% elif '09' in hour.icon or '10' in hour.icon %}🌧️
+                    {% elif '11' in hour.icon %}⛈️
+                    {% elif '13' in hour.icon %}🌨️
+                    {% elif '50' in hour.icon %}🌫️
+                    {% else %}🌡️
+                    {% endif %}
+                </div>
+                <div class="hour-temp">{{ hour.temp }}°</div>
+                {% if hour['pop'] > 20 %}
+                <div class="hour-pop">{{ hour['pop'] }}%</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Daily Forecast -->
+    <div class="forecast-section">
+        <div class="section-title">{{ owm.daily|length }}-Day Forecast</div>
+        <div class="daily-grid">
+            {% for day in owm.daily %}
+            <div class="day-card">
+                <div class="day-name">{{ day.day }}</div>
+                <div class="day-icon">
+                    {% if '01' in day.icon %}☀️
+                    {% elif '02' in day.icon %}⛅
+                    {% elif '03' in day.icon or '04' in day.icon %}☁️
+                    {% elif '09' in day.icon or '10' in day.icon %}🌧️
+                    {% elif '11' in day.icon %}⛈️
+                    {% elif '13' in day.icon %}🌨️
+                    {% elif '50' in day.icon %}🌫️
+                    {% else %}🌡️
+                    {% endif %}
+                </div>
+                <div class="day-temps">
+                    <span class="temp-high">{{ day.high }}°</span>
+                    <span class="temp-divider">/</span>
+                    <span class="temp-low">{{ day.low }}°</span>
+                </div>
+                {% if day['pop'] > 20 %}
+                <div class="day-pop">{{ day['pop'] }}%</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="no-data">Forecast data unavailable</div>
+    {% endif %}
+</div>
+{% endblock %}

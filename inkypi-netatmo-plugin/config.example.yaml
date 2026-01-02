@@ -1,0 +1,34 @@
+# Netatmo Weather Plugin Configuration
+# Copy this file to config.yaml and fill in your credentials
+
+# Netatmo API Credentials
+# Get these from https://dev.netatmo.com/
+netatmo:
+  client_id: "your_netatmo_client_id"
+  client_secret: "your_netatmo_client_secret"
+  username: "your_netatmo_email"
+  password: "your_netatmo_password"
+
+# OpenWeatherMap API Key
+# Get this from https://openweathermap.org/api
+openweathermap:
+  api_key: "your_owm_api_key"
+
+# Display Settings
+display:
+  # Unit system: "metric" or "imperial"
+  units: "metric"
+
+  # Number of days to show in forecast (1-8)
+  forecast_days: 5
+
+  # Update intervals (in seconds)
+  netatmo_update_interval: 300  # 5 minutes
+  owm_update_interval: 7200     # 2 hours
+
+# Button Mapping (if supported by InkyPi)
+buttons:
+  button_1: "previous_station"  # Previous Netatmo station
+  button_2: "next_station"      # Next Netatmo station
+  button_3: "force_refresh"     # Force full data refresh
+  button_4: "unused"            # Reserved for future use

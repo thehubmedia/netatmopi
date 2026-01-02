@@ -1,0 +1,91 @@
+<!-- Temperature Units -->
+<div class="form-group">
+    <label class="form-label" for="units">Temperature Unit</label>
+    <select id="units" name="units" class="form-input">
+        <option value="metric">Celsius (°C)</option>
+        <option value="imperial">Fahrenheit (°F)</option>
+    </select>
+</div>
+
+<!-- Forecast Days -->
+<div class="form-group">
+    <label class="form-label" for="forecast_days">Number of Forecast Days</label>
+    <select id="forecast_days" name="forecast_days" class="form-input">
+        <option value="3">3 days</option>
+        <option value="5" selected>5 days</option>
+        <option value="7">7 days</option>
+    </select>
+</div>
+
+<!-- Station Index (if multiple stations) -->
+<div class="form-group">
+    <label class="form-label" for="station_index">Station Index</label>
+    <input type="number" id="station_index" name="station_index" class="form-input"
+           value="0" min="0" placeholder="0">
+    <small class="form-hint">Index of Netatmo station to display (0 for first station)</small>
+</div>
+
+<!-- Display Options -->
+<div class="form-group">
+    <label class="form-label">Display Options</label>
+    <div class="form-checkbox-group">
+        <label class="form-checkbox">
+            <input type="checkbox" id="show_indoor" name="show_indoor" value="true" checked>
+            <span>Show Indoor Metrics</span>
+        </label>
+        <label class="form-checkbox">
+            <input type="checkbox" id="show_rain" name="show_rain" value="true" checked>
+            <span>Show Rain Data (if available)</span>
+        </label>
+        <label class="form-checkbox">
+            <input type="checkbox" id="show_wind" name="show_wind" value="true" checked>
+            <span>Show Wind Data (if available)</span>
+        </label>
+    </div>
+</div>
+
+<!-- Update Interval -->
+<div class="form-group">
+    <label class="form-label" for="update_interval">Screen Update Interval (minutes)</label>
+    <select id="update_interval" name="update_interval" class="form-input">
+        <option value="5">5 minutes</option>
+        <option value="10">10 minutes</option>
+        <option value="15">15 minutes</option>
+        <option value="30" selected>30 minutes</option>
+        <option value="60">60 minutes</option>
+    </select>
+    <small class="form-hint">How often to refresh the display (Netatmo updates every 5 min)</small>
+</div>
+
+<script>
+    // Prepopulation script for editing existing instances
+    // InkyPi will inject the 'pluginSettings' variable when editing
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof loadPluginSettings !== 'undefined' && loadPluginSettings && typeof pluginSettings !== 'undefined') {
+            // Populate text/select inputs
+            if (pluginSettings.units) {
+                document.getElementById('units').value = pluginSettings.units;
+            }
+            if (pluginSettings.forecast_days) {
+                document.getElementById('forecast_days').value = pluginSettings.forecast_days;
+            }
+            if (pluginSettings.station_index !== undefined) {
+                document.getElementById('station_index').value = pluginSettings.station_index;
+            }
+            if (pluginSettings.update_interval) {
+                document.getElementById('update_interval').value = pluginSettings.update_interval;
+            }
+
+            // Populate checkboxes
+            if (pluginSettings.show_indoor !== undefined) {
+                document.getElementById('show_indoor').checked = pluginSettings.show_indoor === 'true' || pluginSettings.show_indoor === true;
+            }
+            if (pluginSettings.show_rain !== undefined) {
+                document.getElementById('show_rain').checked = pluginSettings.show_rain === 'true' || pluginSettings.show_rain === true;
+            }
+            if (pluginSettings.show_wind !== undefined) {
+                document.getElementById('show_wind').checked = pluginSettings.show_wind === 'true' || pluginSettings.show_wind === true;
+            }
+        }
+    });
+</script>

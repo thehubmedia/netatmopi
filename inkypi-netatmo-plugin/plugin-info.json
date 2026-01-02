@@ -1,0 +1,5 @@
+{
+  "display_name": "Netatmo Weather",
+  "id": "netatmo_weather",
+  "class": "NetatmoWeatherPlugin"
+}
