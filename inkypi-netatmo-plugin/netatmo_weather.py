@@ -255,24 +255,40 @@ class NetatmoClient:
                 timestamp=datetime.fromtimestamp(dashboard.get("time_utc", time.time()))
             )
 
+            # Debug: Log module information
+            modules = device.get("modules", [])
+            logger.info(f"Found {len(modules)} modules for station {device.get('station_name')}")
+
             # Extract outdoor module data if available
-            for module in device.get("modules", []):
+            for module in modules:
                 module_type = module.get("type")
+                module_name = module.get("module_name", "Unknown")
                 module_data = module.get("dashboard_data", {})
 
+                logger.info(f"Processing module: {module_name} (Type: {module_type})")
+                logger.info(f"Module keys: {list(module.keys())}")
+                logger.info(f"Module reachable: {module.get('reachable')}, Battery: {module.get('battery_percent')}%")
+                logger.info(f"Dashboard data keys: {list(module_data.keys()) if module_data else 'No dashboard_data'}")
+
                 if module_type == "NAModule1":  # Outdoor module
-                    netatmo_data.outdoor_temp = module_data.get("Temperature")
-                    netatmo_data.outdoor_humidity = module_data.get("Humidity")
+                    outdoor_temp = module_data.get("Temperature")
+                    outdoor_humidity = module_data.get("Humidity")
+                    logger.info(f"Outdoor module found - Temp: {outdoor_temp}°C, Humidity: {outdoor_humidity}%")
+                    netatmo_data.outdoor_temp = outdoor_temp
+                    netatmo_data.outdoor_humidity = outdoor_humidity
 
                 elif module_type == "NAModule2":  # Wind gauge
                     netatmo_data.wind_speed = module_data.get("WindStrength")
                     netatmo_data.wind_direction = module_data.get("WindAngle")
                     netatmo_data.gust_speed = module_data.get("GustStrength")
+                    logger.info(f"Wind module found - Speed: {netatmo_data.wind_speed}")
 
                 elif module_type == "NAModule3":  # Rain gauge
                     netatmo_data.rain_1h = module_data.get("Rain")
                     netatmo_data.rain_24h = module_data.get("sum_rain_24")
+                    logger.info(f"Rain module found - 1h: {netatmo_data.rain_1h}mm")
 
+            logger.info(f"Final outdoor_temp: {netatmo_data.outdoor_temp}, indoor_temp: {netatmo_data.temperature}")
             return netatmo_data
 
         except Exception as e:
@@ -670,7 +686,7 @@ class NetatmoWeatherPlugin(BasePlugin):
             ]
         }
 
-    def handle_button(self, button_id: int):
+    def handle_button(self, button_id: int, settings: Dict[str, Any], device_config):
         """
         Handle button press events.
 
@@ -679,7 +695,11 @@ class NetatmoWeatherPlugin(BasePlugin):
         - Button 2: Next station
         - Button 3: Force full refresh
         - Button 4: (Reserved for future use)
+
+        Returns: New image to display
         """
+        logger.info(f"Button {button_id} pressed")
+
         if button_id == 1:
             self.previous_station()
         elif button_id == 2:
@@ -687,6 +707,9 @@ class NetatmoWeatherPlugin(BasePlugin):
         elif button_id == 3:
             logger.info("Forcing full refresh")
             self.update_data(force=True)
+
+        # Regenerate and return the updated image
+        return self.generate_image(settings, device_config)
 
 
 # Example standalone testing (when not running within InkyPi)
