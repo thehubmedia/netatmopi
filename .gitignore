@@ -182,3 +182,7 @@ config.yaml
 !.env.example
 .DS_Store
 InkyPi_Weather_Plugin_Analysis.md
+
+preview_*.html
+preview_*.png
+preview_*.json

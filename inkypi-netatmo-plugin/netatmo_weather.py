@@ -12,6 +12,7 @@ import time
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
+from zoneinfo import ZoneInfo
 import requests
 from dataclasses import dataclass
 
@@ -493,6 +494,19 @@ class NetatmoWeatherPlugin(BasePlugin):
             'forecast_days': forecast_days,
         })
 
+        # Format last refresh time (matching InkyPi weather plugin format)
+        timezone_str = device_config.get_config("timezone", default="America/New_York")
+        time_format = device_config.get_config("time_format", default="12h")
+        try:
+            tz = ZoneInfo(timezone_str)
+        except Exception:
+            tz = ZoneInfo("UTC")
+        now = datetime.now(tz)
+        if time_format == "24h":
+            template_params["updated"] = now.strftime("%Y-%m-%d %H:%M")
+        else:
+            template_params["updated"] = now.strftime("%Y-%m-%d %I:%M %p")
+
         # Add plugin_settings for the base template (required for frame/style settings)
         template_params["plugin_settings"] = settings
 
@@ -614,11 +628,31 @@ class NetatmoWeatherPlugin(BasePlugin):
         """Convert Celsius to Fahrenheit"""
         return (celsius * 9/5) + 32
 
+    def _hpa_to_inhg(self, hpa: float) -> float:
+        """Convert hectopascals to inches of mercury"""
+        return hpa * 0.02953
+
     def _convert_temp(self, temp_c: float, units: str) -> float:
         """Convert temperature based on unit preference"""
         if units == "imperial":
             return self._celsius_to_fahrenheit(temp_c)
         return temp_c
+
+    def _convert_pressure(self, hpa: float, units: str) -> tuple[float, str]:
+        """Convert pressure based on unit preference, returns (value, unit_label)"""
+        if units == "imperial":
+            return (self._hpa_to_inhg(hpa), "inHg")
+        return (hpa, "hPa")
+
+    def _mm_to_inches(self, mm: float) -> float:
+        """Convert millimeters to inches"""
+        return mm * 0.03937
+
+    def _convert_rain(self, mm: float, units: str) -> tuple[float, str]:
+        """Convert rain measurement based on unit preference, returns (value, unit_label)"""
+        if units == "imperial":
+            return (self._mm_to_inches(mm), "in")
+        return (mm, "mm")
 
     def _format_netatmo_data(self, temp_unit: str, wind_unit: str) -> Dict[str, Any]:
         """Format Netatmo data for template"""
@@ -633,19 +667,22 @@ class NetatmoWeatherPlugin(BasePlugin):
         indoor_temp = data.temperature
         outdoor_humidity = data.outdoor_humidity if data.outdoor_humidity is not None else data.humidity
 
+        # Convert pressure
+        pressure_value, pressure_unit = self._convert_pressure(data.pressure, units)
+
         return {
             "available": True,
             "outdoor_temp": f"{self._convert_temp(outdoor_temp, units):.1f}{temp_unit}",
             "outdoor_humidity": f"{outdoor_humidity}%",
             "indoor_temp": f"{self._convert_temp(indoor_temp, units):.1f}{temp_unit}",
             "indoor_humidity": f"{data.humidity}%",
-            "pressure": f"{data.pressure:.1f}",
+            "pressure": f"{pressure_value:.2f} {pressure_unit}",
             "co2": f"{data.co2} ppm" if data.co2 else None,
             "noise": f"{data.noise} dB" if data.noise else None,
             "wind_speed": f"{data.wind_speed:.1f} {wind_unit}" if data.wind_speed else None,
             "wind_direction": data.wind_direction,
-            "rain_1h": f"{data.rain_1h:.1f} mm" if data.rain_1h else None,
-            "rain_24h": f"{data.rain_24h:.1f} mm" if data.rain_24h else None,
+            "rain_1h": f"{self._convert_rain(data.rain_1h, units)[0]:.2f} {self._convert_rain(data.rain_1h, units)[1]}" if data.rain_1h is not None else None,
+            "rain_24h": f"{self._convert_rain(data.rain_24h, units)[0]:.2f} {self._convert_rain(data.rain_24h, units)[1]}" if data.rain_24h is not None else None,
         }
 
     def _format_owm_data(self, temp_unit: str, wind_unit: str) -> Dict[str, Any]:
@@ -680,10 +717,33 @@ class NetatmoWeatherPlugin(BasePlugin):
                     "high": f"{d['temp']['max']:.0f}",
                     "low": f"{d['temp']['min']:.0f}",
                     "icon": d["weather"][0]["icon"],
-                    "pop": int(d.get("pop", 0) * 100)
+                    "pop": int(d.get("pop", 0) * 100),
+                    "rain": d.get("rain", 0)  # Rain volume in mm
                 }
                 for d in daily
-            ]
+            ],
+            "today_rain_forecast": self._format_rain_forecast(daily[0] if daily else None)
+        }
+
+    def _format_rain_forecast(self, today_data: Optional[Dict]) -> Optional[str]:
+        """Format today's rain forecast from OWM data"""
+        if not today_data:
+            return None
+
+        rain_mm = today_data.get("rain", 0)
+        pop = int(today_data.get("pop", 0) * 100)
+        units = self.config.get("units", "metric")
+
+        if units == "imperial":
+            rain_value = rain_mm * 0.03937  # Convert mm to inches
+            rain_unit = "in"
+        else:
+            rain_value = rain_mm
+            rain_unit = "mm"
+
+        return {
+            "amount": f"{rain_value:.2f} {rain_unit}",
+            "chance": f"{pop}%"
         }
 
     def handle_button(self, button_id: int, settings: Dict[str, Any], device_config):

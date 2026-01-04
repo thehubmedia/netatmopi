@@ -15,16 +15,30 @@
             <div class="current-temp">{{ netatmo.outdoor_temp }}</div>
             <div class="current-details">
                 <div class="detail-item">💧 {{ netatmo.outdoor_humidity }}</div>
-                <div class="detail-item">🎚️ {{ netatmo.pressure }} hPa</div>
+                <div class="detail-item">🎚️ {{ netatmo.pressure }}</div>
                 {% if netatmo.wind_speed %}
                 <div class="detail-item">💨 {{ netatmo.wind_speed }}</div>
+                {% endif %}
+            </div>
+            <div class="current-rain">
+                {% if netatmo.rain_24h is not none %}
+                <div class="rain-row">
+                    <div class="rain-label">Actual</div>
+                    <div class="rain-value">{{ netatmo.rain_24h }}</div>
+                </div>
+                {% endif %}
+                {% if owm.today_rain_forecast %}
+                <div class="rain-row">
+                    <div class="rain-label">Forecast</div>
+                    <div class="rain-value">{{ owm.today_rain_forecast.amount }} ({{ owm.today_rain_forecast.chance }})</div>
+                </div>
                 {% endif %}
             </div>
         </div>
 
         {% if netatmo.indoor_temp %}
         <div class="indoor-badge">
-            🏠 Indoor: {{ netatmo.indoor_temp }} • {{ netatmo.indoor_humidity }}
+            🏠 Indoor: {{ netatmo.indoor_temp }} • 💧 {{ netatmo.indoor_humidity }}{% if netatmo.co2 %} • 💨 {{ netatmo.co2 }}{% endif %}{% if netatmo.noise %} • 🔊 {{ netatmo.noise }}{% endif %}
         </div>
         {% endif %}
     </div>

@@ -117,6 +117,33 @@ body {
     gap: var(--spacing-xs);
 }
 
+.current-rain {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-left: 1px solid var(--color-gray-light);
+    min-width: 120px;
+    gap: var(--spacing-xs);
+}
+
+.rain-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.rain-label {
+    font-size: var(--font-size-small);
+    color: var(--color-gray-medium);
+    min-width: 50px;
+}
+
+.rain-value {
+    font-size: var(--font-size-small);
+    font-weight: 500;
+}
+
 .indoor-badge {
     margin-top: var(--spacing-md);
     padding: var(--spacing-sm) var(--spacing-md);
