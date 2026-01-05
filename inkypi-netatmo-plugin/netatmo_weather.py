@@ -230,6 +230,36 @@ class NetatmoClient:
             response.raise_for_status()
             data = response.json()
 
+        except requests.exceptions.HTTPError as e:
+            # Handle 403 Forbidden - likely expired token
+            if e.response.status_code == 403:
+                logger.warning("Received 403 Forbidden - attempting to refresh access token")
+                if self.refresh_access_token():
+                    logger.info("Token refreshed successfully, retrying request")
+                    # Retry the request with new token
+                    try:
+                        response = requests.post(
+                            self.STATION_URL,
+                            headers={"Authorization": f"Bearer {self.access_token}"},
+                            data=params
+                        )
+                        response.raise_for_status()
+                        data = response.json()
+                    except Exception as retry_error:
+                        logger.error(f"Failed to fetch Netatmo data after token refresh: {retry_error}")
+                        return None
+                else:
+                    logger.error("Failed to refresh token")
+                    return None
+            else:
+                logger.error(f"Failed to fetch Netatmo data: {e}")
+                return None
+        except Exception as e:
+            logger.error(f"Failed to fetch Netatmo data: {e}")
+            return None
+
+        try:
+
             devices = data.get("body", {}).get("devices", [])
             if not devices:
                 logger.warning("No Netatmo devices found")
