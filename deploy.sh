@@ -104,7 +104,7 @@ echo -e "${GREEN}✓ Directory created${NC}"
 
 # Copy plugin files
 echo -e "${YELLOW}Copying plugin files...${NC}"
-scp $SSH_OPTS -r inkypi-netatmo-plugin/* "$PI_USER@$PI_HOST:$INKYPI_PLUGINS_DIR/$PLUGIN_NAME/"
+rsync -avz --exclude='preview_*.html' --exclude='preview_*.png' -e "ssh $SSH_OPTS" inkypi-netatmo-plugin/ "$PI_USER@$PI_HOST:$INKYPI_PLUGINS_DIR/$PLUGIN_NAME/"
 echo -e "${GREEN}✓ Files copied${NC}"
 
 # Copy/merge .env file to InkyPi root if it exists
