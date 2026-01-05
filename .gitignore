@@ -181,8 +181,9 @@ config.yaml
 !config.example.yaml
 !.env.example
 .DS_Store
-InkyPi_Weather_Plugin_Analysis.md
 
+# AI helper files and generated previews
+.ai-helpers/
 preview_*.html
 preview_*.png
 preview_*.json
