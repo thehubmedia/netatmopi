@@ -20,6 +20,7 @@ import sys
 import json
 import argparse
 import logging
+import base64
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -178,6 +179,13 @@ def fetch_weather_data(settings: dict) -> dict:
     return render_data
 
 
+def convert_svg_to_data_uri(svg_content: str) -> str:
+    """Convert SVG content to data URI for inline embedding"""
+    # Encode SVG content to base64
+    encoded = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
+    return f"data:image/svg+xml;base64,{encoded}"
+
+
 def render_html(template_data: dict, output_path: Path) -> str:
     """Render the weather template to HTML"""
     logger.info("Rendering HTML template...")
@@ -217,6 +225,20 @@ def render_html(template_data: dict, output_path: Path) -> str:
     css_path = SCRIPT_DIR / "render" / "weather.css"
     with open(css_path) as f:
         css_content = f.read()
+
+    # Convert icon paths to data URIs for standalone HTML
+    icons_dir = SCRIPT_DIR / "render" / "icons"
+    icon_replacements = {}
+    if icons_dir.exists():
+        for icon_file in icons_dir.glob("*.svg"):
+            with open(icon_file, 'r') as f:
+                svg_content = f.read()
+            data_uri = convert_svg_to_data_uri(svg_content)
+            icon_replacements[f'icons/{icon_file.name}'] = data_uri
+
+    # Replace all icon src paths with data URIs
+    for icon_path, data_uri in icon_replacements.items():
+        html_content = html_content.replace(f'src="{icon_path}"', f'src="{data_uri}"')
 
     # Create standalone HTML with inlined CSS
     standalone_html = f"""<!DOCTYPE html>

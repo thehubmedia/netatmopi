@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Thermometer - Red for temperature -->
+  <!-- Thermometer body -->
+  <rect x="28" y="12" width="8" height="32" rx="4" fill="#FFFFFF" stroke="#000000" stroke-width="1.5"/>
+
+  <!-- Bulb at bottom -->
+  <circle cx="32" cy="50" r="8" fill="#FF0000" stroke="#000000" stroke-width="1.5"/>
+
+  <!-- Mercury/red fill -->
+  <rect x="30" y="36" width="4" height="8" fill="#FF0000"/>
+
+  <!-- Temperature marks -->
+  <line x1="28" y1="18" x2="25" y2="18" stroke="#000000" stroke-width="1"/>
+  <line x1="28" y1="24" x2="25" y2="24" stroke="#000000" stroke-width="1"/>
+  <line x1="28" y1="30" x2="25" y2="30" stroke="#000000" stroke-width="1"/>
+  <line x1="28" y1="36" x2="25" y2="36" stroke="#000000" stroke-width="1"/>
+</svg>

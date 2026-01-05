@@ -15,14 +15,14 @@
             <div class="current-temp-section">
                 {% if owm.current %}
                 <div class="condition-icon">
-                    {% if '01' in owm.current.icon %}☀️
-                    {% elif '02' in owm.current.icon %}⛅
-                    {% elif '03' in owm.current.icon or '04' in owm.current.icon %}☁️
-                    {% elif '09' in owm.current.icon or '10' in owm.current.icon %}🌧️
-                    {% elif '11' in owm.current.icon %}⛈️
-                    {% elif '13' in owm.current.icon %}🌨️
-                    {% elif '50' in owm.current.icon %}🌫️
-                    {% else %}🌡️
+                    {% if '01' in owm.current.icon %}<img src="{{ icons['clear-day.svg'] }}" alt="Clear">
+                    {% elif '02' in owm.current.icon %}<img src="{{ icons['partly-cloudy.svg'] }}" alt="Partly Cloudy">
+                    {% elif '03' in owm.current.icon or '04' in owm.current.icon %}<img src="{{ icons['cloudy.svg'] }}" alt="Cloudy">
+                    {% elif '09' in owm.current.icon or '10' in owm.current.icon %}<img src="{{ icons['rain.svg'] }}" alt="Rain">
+                    {% elif '11' in owm.current.icon %}<img src="{{ icons['thunderstorm.svg'] }}" alt="Thunderstorm">
+                    {% elif '13' in owm.current.icon %}<img src="{{ icons['snow.svg'] }}" alt="Snow">
+                    {% elif '50' in owm.current.icon %}<img src="{{ icons['fog.svg'] }}" alt="Fog">
+                    {% else %}<img src="{{ icons['thermometer.svg'] }}" alt="Weather">
                     {% endif %}
                 </div>
                 {% endif %}
@@ -75,14 +75,14 @@
             <div class="hour-card">
                 <div class="hour-time">{{ hour.time }}</div>
                 <div class="hour-icon">
-                    {% if '01' in hour.icon %}☀️
-                    {% elif '02' in hour.icon %}⛅
-                    {% elif '03' in hour.icon or '04' in hour.icon %}☁️
-                    {% elif '09' in hour.icon or '10' in hour.icon %}🌧️
-                    {% elif '11' in hour.icon %}⛈️
-                    {% elif '13' in hour.icon %}🌨️
-                    {% elif '50' in hour.icon %}🌫️
-                    {% else %}🌡️
+                    {% if '01' in hour.icon %}<img src="{{ icons['clear-day.svg'] }}" alt="Clear">
+                    {% elif '02' in hour.icon %}<img src="{{ icons['partly-cloudy.svg'] }}" alt="Partly Cloudy">
+                    {% elif '03' in hour.icon or '04' in hour.icon %}<img src="{{ icons['cloudy.svg'] }}" alt="Cloudy">
+                    {% elif '09' in hour.icon or '10' in hour.icon %}<img src="{{ icons['rain.svg'] }}" alt="Rain">
+                    {% elif '11' in hour.icon %}<img src="{{ icons['thunderstorm.svg'] }}" alt="Thunderstorm">
+                    {% elif '13' in hour.icon %}<img src="{{ icons['snow.svg'] }}" alt="Snow">
+                    {% elif '50' in hour.icon %}<img src="{{ icons['fog.svg'] }}" alt="Fog">
+                    {% else %}<img src="{{ icons['thermometer.svg'] }}" alt="Weather">
                     {% endif %}
                 </div>
                 <div class="hour-temp">{{ hour.temp }}°</div>
@@ -97,14 +97,14 @@
             <div class="day-card">
                 <div class="day-name">{{ day.day }}</div>
                 <div class="day-icon">
-                    {% if '01' in day.icon %}☀️
-                    {% elif '02' in day.icon %}⛅
-                    {% elif '03' in day.icon or '04' in day.icon %}☁️
-                    {% elif '09' in day.icon or '10' in day.icon %}🌧️
-                    {% elif '11' in day.icon %}⛈️
-                    {% elif '13' in day.icon %}🌨️
-                    {% elif '50' in day.icon %}🌫️
-                    {% else %}🌡️
+                    {% if '01' in day.icon %}<img src="{{ icons['clear-day.svg'] }}" alt="Clear">
+                    {% elif '02' in day.icon %}<img src="{{ icons['partly-cloudy.svg'] }}" alt="Partly Cloudy">
+                    {% elif '03' in day.icon or '04' in day.icon %}<img src="{{ icons['cloudy.svg'] }}" alt="Cloudy">
+                    {% elif '09' in day.icon or '10' in day.icon %}<img src="{{ icons['rain.svg'] }}" alt="Rain">
+                    {% elif '11' in day.icon %}<img src="{{ icons['thunderstorm.svg'] }}" alt="Thunderstorm">
+                    {% elif '13' in day.icon %}<img src="{{ icons['snow.svg'] }}" alt="Snow">
+                    {% elif '50' in day.icon %}<img src="{{ icons['fog.svg'] }}" alt="Fog">
+                    {% else %}<img src="{{ icons['thermometer.svg'] }}" alt="Weather">
                     {% endif %}
                 </div>
                 <div class="day-temps">

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Rain - Cloud with blue raindrops -->
+  <!-- Cloud -->
+  <ellipse cx="32" cy="24" rx="14" ry="10" fill="#CCCCCC" stroke="#000000" stroke-width="1.5"/>
+  <ellipse cx="42" cy="27" rx="10" ry="8" fill="#CCCCCC" stroke="#000000" stroke-width="1.5"/>
+  <ellipse cx="22" cy="27" rx="8" ry="7" fill="#CCCCCC" stroke="#000000" stroke-width="1.5"/>
+  <rect x="22" y="24" width="30" height="10" fill="#CCCCCC"/>
+
+  <!-- Blue raindrops -->
+  <line x1="24" y1="38" x2="24" y2="48" stroke="#0066FF" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="30" y1="40" x2="30" y2="52" stroke="#0066FF" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="36" y1="38" x2="36" y2="50" stroke="#0066FF" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="42" y1="40" x2="42" y2="48" stroke="#0066FF" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

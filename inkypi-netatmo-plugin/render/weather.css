@@ -104,9 +104,16 @@ body {
 }
 
 .condition-icon {
-    font-size: 64px;
+    width: 80px;
+    height: 80px;
     line-height: 1;
     flex-shrink: 0;
+}
+
+.condition-icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .current-temp-group {
@@ -217,9 +224,16 @@ body {
 }
 
 .hour-icon {
-    font-size: var(--font-size-large);
-    margin-bottom: var(--spacing-xs);
+    width: 28px;
+    height: 28px;
+    margin: 0 auto var(--spacing-xs);
     line-height: 1;
+}
+
+.hour-icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .hour-temp {
@@ -256,9 +270,16 @@ body {
 }
 
 .day-icon {
-    font-size: var(--font-size-xlarge);
-    margin-bottom: var(--spacing-xs);
+    width: 36px;
+    height: 36px;
+    margin: 0 auto var(--spacing-xs);
     line-height: 1;
+}
+
+.day-icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 .day-temps {

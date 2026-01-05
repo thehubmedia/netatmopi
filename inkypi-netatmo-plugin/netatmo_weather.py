@@ -10,9 +10,11 @@ This plugin integrates with InkyPi's BasePlugin architecture.
 import os
 import time
 import logging
+import base64
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 from zoneinfo import ZoneInfo
+from pathlib import Path
 import requests
 from dataclasses import dataclass
 
@@ -624,6 +626,33 @@ class NetatmoWeatherPlugin(BasePlugin):
             )
             self.last_owm_update = now
 
+    def _load_icon_data_uris(self) -> Dict[str, str]:
+        """
+        Load SVG icons and convert them to data URIs for inline embedding.
+
+        Returns a dictionary mapping icon names to their data URI strings.
+        This allows icons to be embedded directly in the HTML without external file dependencies.
+        """
+        icons = {}
+        # Get the directory where this plugin file is located
+        plugin_dir = Path(__file__).parent
+        icons_dir = plugin_dir / "render" / "icons"
+
+        if icons_dir.exists():
+            for icon_file in icons_dir.glob("*.svg"):
+                try:
+                    with open(icon_file, 'r') as f:
+                        svg_content = f.read()
+                    # Convert to base64 data URI
+                    encoded = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
+                    data_uri = f"data:image/svg+xml;base64,{encoded}"
+                    # Store with just the filename (e.g., "clear-day.svg")
+                    icons[icon_file.name] = data_uri
+                except Exception as e:
+                    logger.warning(f"Failed to load icon {icon_file.name}: {e}")
+
+        return icons
+
     def get_render_data(self) -> Dict[str, Any]:
         """
         Get data for rendering the display.
@@ -651,6 +680,7 @@ class NetatmoWeatherPlugin(BasePlugin):
                 "wind": wind_unit,
                 "pressure": "hPa" if units == "metric" else "inHg"
             },
+            "icons": self._load_icon_data_uris(),
             "updated": datetime.now().strftime("%H:%M")
         }
 
