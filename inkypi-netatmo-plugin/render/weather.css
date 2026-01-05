@@ -95,11 +95,37 @@ body {
     gap: var(--spacing-xl);
 }
 
+.current-temp-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex-shrink: 0;
+}
+
+.condition-icon {
+    font-size: 64px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.current-temp-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+}
+
 .current-temp {
     font-size: var(--font-size-temp-huge);
     font-weight: 700;
     line-height: 1;
-    flex-shrink: 0;
+}
+
+.condition-text {
+    font-size: var(--font-size-base);
+    color: var(--color-gray-dark);
+    font-weight: 500;
 }
 
 .current-details {
@@ -173,7 +199,7 @@ body {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: var(--spacing-xs);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
 }
 
 .hour-card {
@@ -217,7 +243,7 @@ body {
 
 .day-card {
     text-align: center;
-    padding: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
     border: 2px solid var(--color-black);
     border-radius: 6px;
     background: var(--color-white);

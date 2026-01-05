@@ -691,6 +691,7 @@ class NetatmoWeatherPlugin(BasePlugin):
             return {"available": False}
 
         current = self.owm_data.get("current", {})
+        current_weather = current.get("weather", [{}])[0]
         hourly = self.owm_data.get("hourly", [])[:24]  # Next 24 hours
         daily = self.owm_data.get("daily", [])[:self.config.get("forecast_days", 5)]
 
@@ -699,12 +700,12 @@ class NetatmoWeatherPlugin(BasePlugin):
             "current": {
                 "temp": f"{current.get('temp', 0):.1f}{temp_unit}",
                 "feels_like": f"{current.get('feels_like', 0):.1f}{temp_unit}",
-                "description": current.get("weather", [{}])[0].get("description", ""),
-                "icon": current.get("weather", [{}])[0].get("icon", ""),
+                "description": current_weather.get("description", "").title(),
+                "icon": current_weather.get("icon", ""),
             },
             "hourly": [
                 {
-                    "time": datetime.fromtimestamp(h["dt"]).strftime("%H:%M"),
+                    "time": datetime.fromtimestamp(h["dt"]).strftime("%I%p").lstrip("0"),
                     "temp": f"{h['temp']:.0f}",
                     "icon": h["weather"][0]["icon"],
                     "pop": int(h.get("pop", 0) * 100)  # Probability of precipitation
