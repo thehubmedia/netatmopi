@@ -818,19 +818,42 @@ class NetatmoWeatherPlugin(BasePlugin):
         - Button 4: (Reserved for future use)
 
         Returns: New image to display
+
+        Note: Station changes are temporary (in-memory only) and reset on restart.
         """
         logger.info(f"Button {button_id} pressed")
 
+        # Get current station index from class variable or settings
+        current_index = getattr(NetatmoWeatherPlugin, '_runtime_station_index', None)
+        if current_index is None:
+            current_index = int(settings.get('station_index', 0))
+
+        # Load stations if needed to get count
+        if not self.stations:
+            self._load_stations()
+
+        station_count = len(self.stations)
+
         if button_id == 1:
-            self.previous_station()
+            # Previous station
+            current_index = (current_index - 1) % station_count
+            logger.info(f"Switching to previous station (index {current_index})")
         elif button_id == 2:
-            self.next_station()
+            # Next station
+            current_index = (current_index + 1) % station_count
+            logger.info(f"Switching to next station (index {current_index})")
         elif button_id == 3:
             logger.info("Forcing full refresh")
-            self.update_data(force=True)
 
-        # Regenerate and return the updated image
-        return self.generate_image(settings, device_config)
+        # Store in class variable for this session (won't persist across restarts)
+        NetatmoWeatherPlugin._runtime_station_index = current_index
+
+        # Create a modified settings dict with the runtime station index
+        runtime_settings = settings.copy()
+        runtime_settings['station_index'] = current_index
+
+        # Regenerate and return the updated image with the runtime station index
+        return self.generate_image(runtime_settings, device_config)
 
 
 # Example standalone testing (when not running within InkyPi)
